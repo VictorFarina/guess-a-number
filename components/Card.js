@@ -2,7 +2,6 @@ import React from "react"
 import { StyleSheet, View, Text, TextInput, Button } from "react-native"
 
 const Card = (props) => {
-  console.log(props.children);
   return <View style={{...styles.card, ...props.style}}>{props.children}</View>
 }
 
