@@ -7,17 +7,49 @@ import {
   Button,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert
 } from "react-native"
 import Card from "../components/Card"
 import Input from "../components/Input"
-
+import NumberContainer from "../components/NumberContainer";
 import Colors from "../constants/colors"
 
 const StartGameScreen = (props) => {
-  const [enteredValue, setEnteredValue] = useState("")
+  const [enteredValue, setEnteredValue] = useState("");
+  const [confirmed, setConfirmed] = useState(false);
+  const [selectedNumber, setSelectedNumber] = useState();
+
   const inputHandler = (inputText) => {
     setEnteredValue(inputText.replace(/[^0-9]/g, " "))
-    console.log(enteredValue)
+  }
+
+  const resetInputHandler = () => {
+    setEnteredValue("")
+    setConfirmed(false)
+  }
+
+  const confirmInputHandler = () => {
+    const chosenNumber = parseInt(enteredValue);
+    if (isNaN(chosenNumber)|| chosenNumber <= 0 || chosenNumber > 99) {
+      Alert.alert('Invalid number!','You can only choosee a number betwen 0 and 99', [{text:'Ok', onPress:resetInputHandler}])
+
+      return;
+    }
+    setConfirmed(true)
+    setSelectedNumber(chosenNumber)
+    setEnteredValue("");
+  }
+
+  let confirmedOutput;
+
+  if (confirmed) {
+    confirmedOutput = (
+      <Card style={styles.confirmedOutput}>
+        <Text>  You Selected:   </Text>
+        <NumberContainer>{selectedNumber}</NumberContainer>
+      </Card>
+    )
+  
   }
 
   return (
@@ -37,12 +69,25 @@ const StartGameScreen = (props) => {
             keyboardType='number-pad'
             maxLength={2}
             onChangeText={inputHandler}
+            value={enteredValue}
           />
           <View style={styles.buttonContainer}>
-            <Button title='Reset' onPress={() => {}} color={Colors.primary} />
-            <Button title='Confirm' onPress={() => {}} color={Colors.accent} />
+            <Button
+              title='Reset'
+              onPress={resetInputHandler}
+              color={Colors.primary}
+            />
+            <Button
+              title='Confirm'
+              onPress={confirmInputHandler}
+              color={Colors.accent}
+            />
           </View>
         </Card>
+
+        
+        {confirmedOutput}
+        
       </View>
     </TouchableWithoutFeedback>
   )
@@ -82,6 +127,14 @@ const styles = StyleSheet.create({
     width: 50,
     textAlign: "center",
   },
+
+  confirmedOutput:{
+
+    marginTop:20
+   
+
+
+  }
 })
 
 export default StartGameScreen
